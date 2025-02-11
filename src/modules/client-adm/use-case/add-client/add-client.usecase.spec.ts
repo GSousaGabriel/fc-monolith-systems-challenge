@@ -1,30 +1,49 @@
-import { vi } from 'vitest'
-import AddClientUseCase from './add-client.usecase'
+import { vi } from "vitest"
+import Address from "../../../@shared/domain/value-object/address"
+import AddClientUseCase from "./add-client.usecase"
 
-const mockRepository = () => {
-    return {
-        add: vi.fn(),
-        find: vi.fn()
-    }
+const MockRepository = () => {
+  return {
+
+    add: vi.fn(),
+    find: vi.fn()
+  }
 }
 
-describe("Add client usecase unit test", () => {
-    it("Should add a client", async () => {
-        const productRepository = mockRepository()
-        const useCase = new AddClientUseCase(productRepository)
+describe("Add Client use case unit test", () => {
 
-        const input = {
-            name: "client",
-            email: "email@email.com",
-            address: "address"
-        }
+  test("should add a client", async () => {
 
-        const result = await useCase.execute(input)
+    const repository = MockRepository()
+    const usecase = new AddClientUseCase(repository)
 
-        expect(productRepository.add).toHaveBeenCalled()
-        expect(result.id).toBeDefined()
-        expect(result.name).toBe(input.name)
-        expect(result.email).toBe(input.email)
-        expect(result.address).toBe(input.address)
-    })
+    const input = {
+      name: "Lucian",
+      email: "lucian@123.com",
+      document: "1234-5678",
+      address: new Address(
+        "Rua 123",
+        "99",
+        "Casa Verde",
+        "Criciúma",
+        "SC",
+        "88888-888",
+      )
+    }
+
+    const result =  await usecase.execute(input)
+
+    expect(repository.add).toHaveBeenCalled()
+    expect(result.id).toBeDefined()
+    expect(result.name).toEqual(input.name)
+    expect(result.email).toEqual(input.email)
+    expect(result.address.city).toEqual(input.address.city)
+    expect(result.address.complement).toEqual(input.address.complement)
+    expect(result.address.number).toEqual(input.address.number)
+    expect(result.address.state).toEqual(input.address.state)
+    expect(result.address.city).toEqual(input.address.city)
+    expect(result.address.street).toEqual(input.address.street)
+    expect(result.address.zipCode).toEqual(input.address.zipCode)
+
+  })
 })

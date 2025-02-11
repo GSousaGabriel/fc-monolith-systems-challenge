@@ -1,35 +1,52 @@
-import { vi } from 'vitest'
-import Client from '../../domain/client.entity'
-import Id from '../../../@shared/domain/value-object/id.value-object'
-import FindClientUseCase from './find-client.usecase'
+
+import { vi } from "vitest"
+import Address from "../../../@shared/domain/value-object/address"
+import Id from "../../../@shared/domain/value-object/id.value-object"
+import Client from "../../domain/client.entity"
+import FindClientUseCase from "./find-client.usecase"
 
 const client = new Client({
-    id: new Id("1"),
-    name: "client",
-    email: "email@email.com",
-    address: "address client",
-
+  id: new Id("1"),
+  name: "Lucian",
+  email: "lucian@123.com",
+  document: "1234-5678",
+  address: new Address(
+    "Rua 123",
+    "99",
+    "Casa Verde",
+    "Criciúma",
+    "SC",
+    "88888-888",
+  )
 })
 
-const mockRepository = () => {
-    return {
-        add: vi.fn(),
-        find: vi.fn().mockReturnValue(Promise.resolve(client))
-    }
+const MockRepository = () => {
+
+  return {
+    add: vi.fn(),
+    find: vi.fn().mockReturnValue(Promise.resolve(client))
+  }
 }
 
-describe("Find client usecase unit test", () => {
-    it("Should find a client", async () => {
-        const productRepository = mockRepository()
-        const useCase = new FindClientUseCase(productRepository)
+describe("Find Client use case unit test", () => {
 
-        const result = await useCase.execute({ id: client.id.id })
+  test("should find a client", async () => {
 
-        expect(result.id).toBeDefined()
-        expect(result.name).toBe(client.name)
-        expect(result.email).toBe(client.email)
-        expect(result.address).toBe(client.address)
-        expect(result.createdAt).toBe(client.createdAt)
-        expect(result.updatedAt).toBe(client.updatedAt)
-    })
+    const repository = MockRepository()
+    const usecase = new FindClientUseCase(repository)
+
+    const input = {
+      id: "1"
+    }
+
+    const result = await usecase.execute(input)
+
+    expect(repository.find).toHaveBeenCalled()
+    expect(result.id).toEqual(input.id)
+    expect(result.name).toEqual(client.name)
+    expect(result.email).toEqual(client.email)
+    expect(result.address).toEqual(client.address)
+    expect(result.createdAt).toEqual(client.createdAt)
+    expect(result.updatedAt).toEqual(client.updatedAt)
+  })
 })
