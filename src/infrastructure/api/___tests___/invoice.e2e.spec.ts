@@ -15,13 +15,15 @@ import ItemModel from "../../../modules/Invoice/repository/item.model";
 import OrderModel from "../../../modules/checkout/repository/order.model";
 import ClientOrder from "../../../modules/checkout/repository/client.order.model";
 import ProductOrder from "../../../modules/checkout/repository/product.order.model";
+import { invoiceRoute } from "../routes/invoice.route";
 
-describe("E2E test for checkout", () => {
+describe("E2E test for invoice", () => {
   const app: Express = express();
   app.use(express.json());
   app.use("/clients", clientsRoute);
   app.use("/products", productsRoute);
   app.use("/checkout", checkoutRoute);
+  app.use("/invoice", invoiceRoute);
   let sequelize: Sequelize;
   let migration: Umzug<any>;
 
@@ -57,7 +59,7 @@ describe("E2E test for checkout", () => {
     await sequelize.close();
   });
 
-  it("should create a checkout", async () => {
+  it("should get an invoice", async () => {
     await request(app)
       .post("/clients")
       .send({
@@ -81,7 +83,7 @@ describe("E2E test for checkout", () => {
       purchasePrice: 100,
       stock: 10,
     });
-    const response = await request(app)
+    const responseCheckout = await request(app)
       .post("/checkout")
       .send({
         clientId: "1",
@@ -92,9 +94,16 @@ describe("E2E test for checkout", () => {
         ],
       });
 
+    const response = await request(app).get(
+      `/invoice/${responseCheckout.body.invoiceId}`
+    );
+
     expect(response.status).toBe(200);
-    expect(response.body.id).toBeDefined();
-    expect(response.body.invoiceId).toBeDefined();
-    expect(response.body.status).toBe("approved");
+    expect(response.body.id).toBeTruthy();
+    expect(response.body.name).toBe("jose");
+    expect(response.body.document).toBe("123");
+    expect(response.body.items[0].name).toBe("product");
+    expect(response.body.items[0].price).toBe(100);
+    expect(response.body.createdAt).toBeTruthy();
   });
 });

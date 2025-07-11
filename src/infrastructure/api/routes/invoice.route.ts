@@ -1,38 +1,16 @@
-// import express, { Request, Response } from "express";
-// import ProductRepository from "../../../modules/product-adm/repository/product.repository";
-// import AddProductUseCase from "../../../modules/product-adm/use-case/add-product/add-product.useCase";
+import express, { Request, Response } from "express";
+import InvoiceRepository from "../../../modules/Invoice/repository/invoice.repository";
+import FindInvoiceUseCase from "../../../modules/Invoice/use-case/find-invoice/find-invoice.useCase";
 
-// export const customerRoute = express.Router()
+export const invoiceRoute = express.Router();
 
-// customerRoute.get("/", async (req: Request, res: Response) => {
-//     const customerRepository = new ProductRepository()
-//     const useCase = new AddProductUseCase(customerRepository)
-
-//     try {
-//         const output = await useCase.execute({})
-//         res.send(output)
-//     } catch (e) {
-//         res.status(500).send(e)
-//     }
-// })
-
-// customerRoute.post("/", async (req: Request, res: Response) => {
-//     const customerRepository = new CustomerRepository()
-//     const useCase = new CreateCustomerUseCase(customerRepository)
-//     try {
-//         const customerDto = {
-//             name: req.body.name,
-//             address: {
-//                 street: req.body.address.street,
-//                 city: req.body.address.city,
-//                 number: req.body.address.number,
-//                 zip: req.body.address.zip
-//             }
-//         }
-
-//         const output = await useCase.execute(customerDto)
-//         res.send(output)
-//     } catch (e) {
-//         res.status(500).send(e)
-//     }
-// })
+invoiceRoute.get("/:id", async (req: Request, res: Response) => {
+  const invoiceRepository = new InvoiceRepository();
+  const useCase = new FindInvoiceUseCase(invoiceRepository);
+  try {
+    const output = await useCase.execute({id: req.params.id});
+    res.send(output);
+  } catch (e) {
+    res.status(500).send(e);
+  }
+});

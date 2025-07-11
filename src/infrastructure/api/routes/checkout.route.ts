@@ -5,7 +5,6 @@ export const checkoutRoute = express.Router()
 
 checkoutRoute.post("/", async (req: Request, res: Response) => {
     try {
-        console.log("daksldsa")
         const useCase = CheckoutFacadeFactory.create();
 
         const checkoutDto = {

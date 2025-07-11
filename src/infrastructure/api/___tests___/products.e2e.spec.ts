@@ -1,6 +1,6 @@
 import { Sequelize } from "sequelize-typescript"
 import express, { Express } from 'express'
-import ProductModel from "../../../modules/product-adm/repository/product.model"
+import ProductModelAdm from "../../../modules/product-adm/repository/product.model"
 import request from 'supertest'
 import { Umzug } from "umzug";
 import { migrator } from "../config-migrations/migrator";
@@ -20,7 +20,7 @@ describe("product api test", () => {
             logging: false
         })
 
-        sequelize.addModels([ProductModel])
+        sequelize.addModels([ProductModelAdm])
         migration = migrator(sequelize)
         await migration.up()
     })
